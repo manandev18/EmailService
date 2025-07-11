@@ -1,0 +1,81 @@
+openapi: 3.0.0
+info:
+  title: Resilient Email Service API
+  description: An email-sending service with retry, fallback, idempotency, rate limiting, and status tracking.
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:3000
+    description: Local server
+  - url: https://your-deployment-url.com
+    description: Cloud deployment (Render or Railway)
+
+paths:
+  /send:
+    post:
+      summary: Send an email
+      description: Sends an email using mock providers with retry, fallback, and rate limiting.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - to
+                - subject
+                - body
+              properties:
+                to:
+                  type: string
+                  format: email
+                  example: abc@example.com
+                subject:
+                  type: string
+                  example: Welcome!
+                body:
+                  type: string
+                  example: Hello, this is a test email.
+                idempotencyKey:
+                  type: string
+                  example: email-001
+      responses:
+        200:
+          description: Email sent or handled
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  emailid:
+                    type: string
+                    example: email-001
+
+  /status/{emailId}:
+    get:
+      summary: Get email status
+      description: Returns the status of a previously sent email.
+      parameters:
+        - in: path
+          name: emailId
+          required: true
+          schema:
+            type: string
+          description: The unique idempotency key used to track the email
+      responses:
+        200:
+          description: Status of the email
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  emailId:
+                    type: string
+                    example: email-001
+                  status:
+                    type: string
+                    example: sent
