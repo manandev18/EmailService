@@ -7,7 +7,7 @@ info:
 servers:
   - url: http://localhost:3000
     description: Local server
-  - url: https://your-deployment-url.com
+  - url: https://emailservice-h61s.onrender.com
     description: Cloud deployment (Render or Railway)
 
 paths:
